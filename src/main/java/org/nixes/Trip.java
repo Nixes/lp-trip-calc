@@ -10,7 +10,7 @@ public class Trip {
     // Columns: Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status
     private LocalDateTime startedOnUTC;
     private LocalDateTime finishedOnUTC;
-    private int durationSecs;
+    private long durationSecs;
     private String fromStopId;
     private String toStopId;
     private BigDecimal chargeAmount;
@@ -22,7 +22,7 @@ public class Trip {
     public Trip(
             @NotNull LocalDateTime startedOnUTC,
             @Nullable LocalDateTime finishedOnUTC,
-            int durationSecs,
+            long durationSecs,
             @NotNull String fromStopId,
             @NotNull String toStopId,
             @NotNull BigDecimal chargeAmount,
@@ -59,11 +59,11 @@ public class Trip {
         this.finishedOnUTC = finishedOnUTC;
     }
 
-    public int getDurationSecs() {
+    public long getDurationSecs() {
         return durationSecs;
     }
 
-    public void setDurationSecs(int durationSecs) {
+    public void setDurationSecs(long durationSecs) {
         this.durationSecs = durationSecs;
     }
 

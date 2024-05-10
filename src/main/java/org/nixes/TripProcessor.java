@@ -3,6 +3,7 @@ package org.nixes;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.*;
 
 public class TripProcessor {
@@ -45,12 +46,13 @@ public class TripProcessor {
                     incompleteTrips.remove(tap.getId());
                     var chargeAmount = calculateChargeAmount(previousTap, tap);
                     var tripStatus = isTripCancelled(previousTap, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETE;
+                    var tripDuration = Duration.between(previousTap.getDateTimeUTC(), tap.getDateTimeUTC()).toSeconds();
 
                     // create a new previousTap
                     var newTrip = new Trip(
                             previousTap.getDateTimeUTC(),
                             tap.getDateTimeUTC(),
-                            0,
+                            tripDuration,
                             previousTap.getStopId(),
                             tap.getStopId(),
                             chargeAmount,
