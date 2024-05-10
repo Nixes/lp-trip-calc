@@ -1,7 +1,7 @@
 package org.nixes;
 
 public enum TripStatus {
-    COMPLETE,
+    COMPLETED,
     INCOMPLETE,
     CANCELLED
 }

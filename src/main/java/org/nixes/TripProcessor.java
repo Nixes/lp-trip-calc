@@ -58,6 +58,7 @@ public class TripProcessor {
 
     public ArrayList<Trip> processTrips(@NotNull List<Tap> taps) {
         var incompleteTrips = new HashMap<String, Tap>();
+        var incompleteTapOffs = new ArrayList<Tap>();
         var processedTrips = new ArrayList<Trip>();
         for (var tap: taps) {
             if (tap.getTapOn()) {
@@ -67,7 +68,7 @@ public class TripProcessor {
                 if (tapOn != null) {
                     incompleteTrips.remove(tap.getPrimaryAccountNumber());
                     var chargeAmount = calculateChargeAmount(tapOn, tap);
-                    var tripStatus = isTripCancelled(tapOn, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETE;
+                    var tripStatus = isTripCancelled(tapOn, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETED;
                     var tripDuration = Duration.between(tapOn.getDateTimeUTC(), tap.getDateTimeUTC()).toSeconds();
 
                     // create a new tapOn
@@ -84,12 +85,30 @@ public class TripProcessor {
                             tripStatus
                     );
                     processedTrips.add(newTrip);
+                } else {
+                    incompleteTapOffs.add(tap);
                 }
             }
         }
 
         // add any remaining incomplete trips to the processed trips list
         for (var tap: incompleteTrips.values()) {
+            var trip = new Trip(
+                    tap.getDateTimeUTC(),
+                    tap.getDateTimeUTC(),
+                    0,
+                    tap.getStopId(),
+                    tap.getStopId(),
+                    calculateIncompleteChargeAmount(tap),
+                    tap.getCompanyId(),
+                    tap.getBusId(),
+                    tap.getPrimaryAccountNumber(),
+                    TripStatus.INCOMPLETE
+            );
+            processedTrips.add(trip);
+        }
+
+        for (var tap: incompleteTapOffs) {
             var trip = new Trip(
                     tap.getDateTimeUTC(),
                     tap.getDateTimeUTC(),
