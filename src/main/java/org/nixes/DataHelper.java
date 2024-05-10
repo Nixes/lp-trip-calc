@@ -27,7 +27,7 @@ public class DataHelper {
             }
             var parts = Arrays.stream(line.split(",")).map(String::trim).toArray(String[]::new);
             // columns are ID, DateTimeUTC, TapType, StopId, CompanyId, BusID, PAN
-            var tap = new Tap(parts[0], LocalDateTime.parse(parts[1], DATE_TIME_FORMATTER), parts[2] == "ON", parts[3], parts[4], parts[5], parts[6]);
+            var tap = new Tap(parts[0], LocalDateTime.parse(parts[1], DATE_TIME_FORMATTER), parts[2].equals("ON"), parts[3], parts[4], parts[5], parts[6]);
             taps.add(tap);
         }
 

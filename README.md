@@ -25,3 +25,7 @@ Run 'TripProcessCommand' with an input taps.csv in the working directory.
 - Taps are in ascending order of DateTimeUTC
 - Cancelled trips use the same from and to StopId
 - Cancelled trips use the first DateTimeUTC as both the Started and Finished values
+
+## Issues
+
+- The DurationSecs in the example output is incorrect. the difference in mins between the Started and Finished times is 5 mins which is 300 seconds. The originally provided output says 900 seconds.
