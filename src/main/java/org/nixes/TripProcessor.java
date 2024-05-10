@@ -7,20 +7,42 @@ import java.time.Duration;
 import java.util.*;
 
 public class TripProcessor {
-    private HashMap<Set<String>, BigDecimal> fareRules;
+    private HashMap<Set<String>, BigDecimal> fareRules = new HashMap<>();
+    private HashMap<String, BigDecimal> maxFares = new HashMap<>();
 
     public void setFareRules(HashMap<Set<String>, BigDecimal> fareRules) {
         this.fareRules = fareRules;
+        // find the max fare for each stop so we can calculate the incomplete charge amount
+        for (var entry: fareRules.entrySet()) {
+            var stops = entry.getKey();
+            var fare = entry.getValue();
+            for (var stop: stops) {
+                if (maxFares.containsKey(stop)) {
+                    maxFares.put(stop, maxFares.get(stop).max(fare));
+                } else {
+                    maxFares.put(stop, fare);
+                }
+            }
+        }
     }
 
     public TripProcessor() {
-        fareRules = new HashMap<Set<String>, BigDecimal>( Map.of(
+        this.setFareRules(new HashMap<Set<String>, BigDecimal>( Map.of(
                 Set.of("Stop1", "Stop2"), new BigDecimal("3.25"),
                 Set.of("Stop2", "Stop3"), new BigDecimal("5.50"),
                 Set.of("Stop1", "Stop3"), new BigDecimal("7.30")
-        ));
+        )));
     }
+
+    private BigDecimal calculateIncompleteChargeAmount(Tap tap) {
+        return maxFares.getOrDefault(tap.getStopId(), BigDecimal.ZERO);
+    }
+
     private BigDecimal calculateChargeAmount(Tap tapOn, Tap tapOff) {
+        if (isTripCancelled(tapOn, tapOff)) {
+            return BigDecimal.ZERO;
+        }
+
         var currentSet = Set.of(tapOn.getStopId(), tapOff.getStopId());
         var fare = fareRules.get(currentSet);
         if (fare != null) {
@@ -41,24 +63,24 @@ public class TripProcessor {
             if (tap.getTapOn()) {
                 incompleteTrips.put(tap.getPrimaryAccountNumber(), tap);
             } else {
-                var previousTap = incompleteTrips.get(tap.getPrimaryAccountNumber());
-                if (previousTap != null) {
+                var tapOn = incompleteTrips.get(tap.getPrimaryAccountNumber());
+                if (tapOn != null) {
                     incompleteTrips.remove(tap.getPrimaryAccountNumber());
-                    var chargeAmount = calculateChargeAmount(previousTap, tap);
-                    var tripStatus = isTripCancelled(previousTap, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETE;
-                    var tripDuration = Duration.between(previousTap.getDateTimeUTC(), tap.getDateTimeUTC()).toSeconds();
+                    var chargeAmount = calculateChargeAmount(tapOn, tap);
+                    var tripStatus = isTripCancelled(tapOn, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETE;
+                    var tripDuration = Duration.between(tapOn.getDateTimeUTC(), tap.getDateTimeUTC()).toSeconds();
 
-                    // create a new previousTap
+                    // create a new tapOn
                     var newTrip = new Trip(
-                            previousTap.getDateTimeUTC(),
+                            tapOn.getDateTimeUTC(),
                             tap.getDateTimeUTC(),
                             tripDuration,
-                            previousTap.getStopId(),
+                            tapOn.getStopId(),
                             tap.getStopId(),
                             chargeAmount,
-                            previousTap.getCompanyId(),
-                            previousTap.getBusId(),
-                            previousTap.getPrimaryAccountNumber(),
+                            tapOn.getCompanyId(),
+                            tapOn.getBusId(),
+                            tapOn.getPrimaryAccountNumber(),
                             tripStatus
                     );
                     processedTrips.add(newTrip);
@@ -74,7 +96,7 @@ public class TripProcessor {
                     0,
                     tap.getStopId(),
                     tap.getStopId(),
-                    BigDecimal.ZERO,
+                    calculateIncompleteChargeAmount(tap),
                     tap.getCompanyId(),
                     tap.getBusId(),
                     tap.getPrimaryAccountNumber(),
