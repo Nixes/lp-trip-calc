@@ -39,11 +39,11 @@ public class TripProcessor {
         var processedTrips = new ArrayList<Trip>();
         for (var tap: taps) {
             if (tap.getTapOn()) {
-                incompleteTrips.put(tap.getId(), tap);
+                incompleteTrips.put(tap.getPrimaryAccountNumber(), tap);
             } else {
-                var previousTap = incompleteTrips.get(tap.getId());
+                var previousTap = incompleteTrips.get(tap.getPrimaryAccountNumber());
                 if (previousTap != null) {
-                    incompleteTrips.remove(tap.getId());
+                    incompleteTrips.remove(tap.getPrimaryAccountNumber());
                     var chargeAmount = calculateChargeAmount(previousTap, tap);
                     var tripStatus = isTripCancelled(previousTap, tap) ? TripStatus.CANCELLED : TripStatus.COMPLETE;
                     var tripDuration = Duration.between(previousTap.getDateTimeUTC(), tap.getDateTimeUTC()).toSeconds();
