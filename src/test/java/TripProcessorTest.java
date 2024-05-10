@@ -25,7 +25,7 @@ public class TripProcessorTest {
         assertEquals(1, trips.size());
         var trip = trips.get(0);
         assertEquals(tap1.getDateTimeUTC(), trip.getStartedOnUTC());
-//        assertEquals(tap2.getDateTimeUTC(), trip.getFinishedOnUTC());
+        assertEquals(tap2.getDateTimeUTC(), trip.getFinishedOnUTC());
         assertEquals(300, trip.getDurationSecs());
         assertEquals("Stop1", trip.getFromStopId());
         assertEquals("Stop2", trip.getToStopId());
