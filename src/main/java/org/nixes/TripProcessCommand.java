@@ -1,7 +1,8 @@
 package org.nixes;
 
-public class Main {
+public class TripProcessCommand {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        var fileName = "taps.csv";
+
     }
 }
