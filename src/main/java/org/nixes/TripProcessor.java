@@ -15,9 +15,9 @@ public class TripProcessor {
 
     public TripProcessor() {
         fareRules = new HashMap<Set<String>, BigDecimal>( Map.of(
-                Set.of("stop1", "stop2"), new BigDecimal("3.25"),
-                Set.of("stop2", "stop3"), new BigDecimal("5.50"),
-                Set.of("stop1", "stop3"), new BigDecimal("7.30")
+                Set.of("Stop1", "Stop2"), new BigDecimal("3.25"),
+                Set.of("Stop2", "Stop3"), new BigDecimal("5.50"),
+                Set.of("Stop1", "Stop3"), new BigDecimal("7.30")
         ));
     }
     private BigDecimal calculateChargeAmount(Tap tapOn, Tap tapOff) {
