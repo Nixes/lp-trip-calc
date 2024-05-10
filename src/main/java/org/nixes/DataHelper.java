@@ -38,7 +38,7 @@ public class DataHelper {
 
     public static void saveTripsCsv(List<Trip> trips, String fileName) throws IOException {
         // StartedOnUTC, FinishedOnUTC, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID,
-        var header = "Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status\n";
+        var header = "Started, Finished, DurationSecs, FromStopId, ToStopId, ChargeAmount, CompanyId, BusID, PAN, Status";
         var lines = new ArrayList<String>();
         lines.add(header);
         for (var trip : trips) {
