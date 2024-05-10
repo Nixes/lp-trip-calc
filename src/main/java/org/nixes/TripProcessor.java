@@ -57,11 +57,20 @@ public class TripProcessor {
     }
 
     public ArrayList<Trip> processTrips(@NotNull List<Tap> taps) {
+        // sort the taps by time ascending
+        taps.sort(Comparator.comparing(Tap::getDateTimeUTC));
+
         var incompleteTrips = new HashMap<String, Tap>();
-        var incompleteTapOffs = new ArrayList<Tap>();
+        var uncompletableTrips = new ArrayList<Tap>();
         var processedTrips = new ArrayList<Trip>();
         for (var tap: taps) {
             if (tap.getTapOn()) {
+                // check if there is already a tapOn for this account number
+                var existingTap = incompleteTrips.get(tap.getPrimaryAccountNumber());
+                if (existingTap != null) {
+                    // if there is, then this tapOn is uncompletable
+                    uncompletableTrips.add(tap);
+                }
                 incompleteTrips.put(tap.getPrimaryAccountNumber(), tap);
             } else {
                 var tapOn = incompleteTrips.get(tap.getPrimaryAccountNumber());
@@ -86,7 +95,7 @@ public class TripProcessor {
                     );
                     processedTrips.add(newTrip);
                 } else {
-                    incompleteTapOffs.add(tap);
+                    uncompletableTrips.add(tap);
                 }
             }
         }
@@ -108,7 +117,7 @@ public class TripProcessor {
             processedTrips.add(trip);
         }
 
-        for (var tap: incompleteTapOffs) {
+        for (var tap: uncompletableTrips) {
             var trip = new Trip(
                     tap.getDateTimeUTC(),
                     tap.getDateTimeUTC(),
