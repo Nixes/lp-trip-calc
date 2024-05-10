@@ -21,7 +21,7 @@ public class Trip {
 
     public Trip(
             @NotNull LocalDateTime startedOnUTC,
-            @Nullable LocalDateTime finishedOnUTC,
+            @NotNull LocalDateTime finishedOnUTC,
             long durationSecs,
             @NotNull String fromStopId,
             @NotNull String toStopId,
