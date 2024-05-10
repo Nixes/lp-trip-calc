@@ -23,3 +23,5 @@ Run 'TripProcessCommand' with an input taps.csv in the working directory.
 - Fare rules do not change.
 - First tap is always a tap on
 - Taps are in ascending order of DateTimeUTC
+- Cancelled trips use the same from and to StopId
+- Cancelled trips use the first DateTimeUTC as both the Started and Finished values

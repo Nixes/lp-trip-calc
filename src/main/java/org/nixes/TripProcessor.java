@@ -66,11 +66,11 @@ public class TripProcessor {
             }
         }
 
-        // add incomplete trips to the complete trips list
+        // add any remaining incomplete trips to the processed trips list
         for (var tap: incompleteTrips.values()) {
             var trip = new Trip(
                     tap.getDateTimeUTC(),
-                    null,
+                    tap.getDateTimeUTC(),
                     0,
                     tap.getStopId(),
                     tap.getStopId(),
