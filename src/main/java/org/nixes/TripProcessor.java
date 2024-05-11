@@ -48,8 +48,9 @@ public class TripProcessor {
         if (fare != null) {
             return fare;
         }
-        // assumes that the fare is 0 if the stops are not in the fareRules, may want to throw an exception instead
-        return BigDecimal.ZERO;
+
+        // may not want to throw exception here, depends on discussions with the team
+        throw new IllegalArgumentException("Fare not found for stops: " + currentSet);
     }
 
     private static boolean isTripCancelled(Tap tapOn, Tap tapOff) {
