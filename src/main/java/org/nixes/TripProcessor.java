@@ -62,7 +62,7 @@ public class TripProcessor {
         taps.sort(Comparator.comparing(Tap::getDateTimeUTC));
 
         var incompleteTrips = new HashMap<String, Tap>();
-        var uncompletableTrips = new ArrayList<Tap>();
+        var uncompletableTrips = new LinkedList<Tap>();
         var processedTrips = new LinkedList<Trip>();
         for (var tap: taps) {
             if (tap.getTapOn()) {
