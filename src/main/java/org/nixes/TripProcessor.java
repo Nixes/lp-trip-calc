@@ -57,13 +57,13 @@ public class TripProcessor {
         return tapOn.getStopId().equals(tapOff.getStopId());
     }
 
-    public ArrayList<Trip> processTrips(@NotNull List<Tap> taps) {
+    public List<Trip> processTrips(@NotNull List<Tap> taps) {
         // sort the taps by time ascending
         taps.sort(Comparator.comparing(Tap::getDateTimeUTC));
 
         var incompleteTrips = new HashMap<String, Tap>();
         var uncompletableTrips = new ArrayList<Tap>();
-        var processedTrips = new ArrayList<Trip>();
+        var processedTrips = new LinkedList<Trip>();
         for (var tap: taps) {
             if (tap.getTapOn()) {
                 // check if there is already a tapOn for this account number
