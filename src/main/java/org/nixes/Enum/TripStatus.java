@@ -1,4 +1,4 @@
-package org.nixes;
+package org.nixes.Enum;
 
 public enum TripStatus {
     COMPLETED,

@@ -1,4 +1,4 @@
-package org.nixes;
+package org.nixes.Model;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -86,5 +86,18 @@ public class Tap {
 
     public void setPrimaryAccountNumber(String primaryAccountNumber) {
         this.primaryAccountNumber = primaryAccountNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Tap{" +
+                "id='" + id + '\'' +
+                ", dateTimeUTC=" + dateTimeUTC +
+                ", isTapOn=" + isTapOn +
+                ", stopId='" + stopId + '\'' +
+                ", companyId='" + companyId + '\'' +
+                ", busId='" + busId + '\'' +
+                ", primaryAccountNumber='" + primaryAccountNumber + '\'' +
+                '}';
     }
 }

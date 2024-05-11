@@ -1,13 +1,18 @@
-package org.nixes;
+package org.nixes.Service;
 
 import com.google.inject.Inject;
+import org.nixes.Model.Tap;
+import org.nixes.Enum.TripStatus;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class TripPriceCalculator {
+/**
+ * This class is responsible for calculating the charge amount for a trip.
+ */
+public class TripPriceCalculator implements ITripPriceCalculator {
     private HashMap<Set<String>, BigDecimal> fareRules;
     private HashMap<String, BigDecimal> maxFares;
 
@@ -38,6 +43,7 @@ public class TripPriceCalculator {
         }
     }
 
+    @Override
     public BigDecimal calculateChargeAmount(Tap tapOn, Tap tapOff, TripStatus status) {
         if (status == TripStatus.CANCELLED) {
             return BigDecimal.ZERO;

@@ -2,24 +2,31 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.junit.jupiter.api.Test;
 import org.nixes.*;
+import org.nixes.Enum.TripStatus;
+import org.nixes.Model.Tap;
+import org.nixes.Model.Trip;
+import org.nixes.Service.ITripProcessor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TripProcessorTest {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
     @Test
     public void testProcessTripsSingleTrip() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
-        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
         taps.add(tap2);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -39,13 +46,13 @@ public class TripProcessorTest {
     @Test
     public void testProcessTripsSingleTripDescOrder() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus1", "PAN1");
-        var tap2 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus1", "PAN1");
+        var tap2 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
         taps.add(tap2);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -65,11 +72,11 @@ public class TripProcessorTest {
     @Test
     public void testTapOffOnly() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -89,13 +96,13 @@ public class TripProcessorTest {
     @Test
     public void testDoubleTapOn() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
-        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop2", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DATE_TIME_FORMATTER), true, "Stop2", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
         taps.add(tap2);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(2, trips.size());
@@ -128,14 +135,14 @@ public class TripProcessorTest {
     @Test
     public void testCancelledTrip() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
         // same PAN and tap off at the same stop
-        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:05:00", DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
         taps.add(tap2);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -152,14 +159,14 @@ public class TripProcessorTest {
     @Test
     public void testIncompleteTrip() {
         var taps = new ArrayList<Tap>();
-        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
+        var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN1");
         // different PAN should not count as a tap off
-        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN2");
+        var tap2 = new Tap("2", LocalDateTime.parse("01-01-2020 10:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus1", "PAN2");
         taps.add(tap1);
         taps.add(tap2);
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(2, trips.size());
@@ -193,21 +200,21 @@ public class TripProcessorTest {
     @Test
     public void testCompleteSampleInput() {
         var taps = new ArrayList<Tap>();
-        taps.add(new Tap("1", LocalDateTime.parse("22-01-2023 13:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "5500005555555559"));
-        taps.add(new Tap("2", LocalDateTime.parse("22-01-2023 13:05:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
-        taps.add(new Tap("3", LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop3", "Company1", "Bus36", "4111111111111111"));
-        taps.add(new Tap("4", LocalDateTime.parse("23-01-2023 08:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "4111111111111111"));
-        taps.add(new Tap("5", LocalDateTime.parse("23-01-2023 08:02:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus37", "4111111111111111"));
-        taps.add(new Tap("6", LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
+        taps.add(new Tap("1", LocalDateTime.parse("22-01-2023 13:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "5500005555555559"));
+        taps.add(new Tap("2", LocalDateTime.parse("22-01-2023 13:05:00", DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
+        taps.add(new Tap("3", LocalDateTime.parse("22-01-2023 09:20:00", DATE_TIME_FORMATTER), true, "Stop3", "Company1", "Bus36", "4111111111111111"));
+        taps.add(new Tap("4", LocalDateTime.parse("23-01-2023 08:00:00", DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "4111111111111111"));
+        taps.add(new Tap("5", LocalDateTime.parse("23-01-2023 08:02:00", DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus37", "4111111111111111"));
+        taps.add(new Tap("6", LocalDateTime.parse("24-01-2023 16:30:00", DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
 
         var expectedTrips = new ArrayList<Trip>();
-        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), 0, "Stop3", "Stop3", new BigDecimal("7.30"), "Company1", "Bus36", "4111111111111111", TripStatus.INCOMPLETE));
-        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 13:00:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 13:05:00", DataHelper.DATE_TIME_FORMATTER), 300, "Stop1", "Stop2", new BigDecimal("3.25"), "Company1", "Bus37", "5500005555555559", TripStatus.COMPLETED));
-        expectedTrips.add(new Trip(LocalDateTime.parse("23-01-2023 08:00:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("23-01-2023 08:02:00", DataHelper.DATE_TIME_FORMATTER), 120, "Stop1", "Stop1", BigDecimal.ZERO, "Company1", "Bus37", "4111111111111111", TripStatus.CANCELLED));
-        expectedTrips.add(new Trip(LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), 0, "Stop2", "Stop2", new BigDecimal("5.50"), "Company1", "Bus37", "5500005555555559", TripStatus.INCOMPLETE));
+        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 09:20:00", DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 09:20:00", DATE_TIME_FORMATTER), 0, "Stop3", "Stop3", new BigDecimal("7.30"), "Company1", "Bus36", "4111111111111111", TripStatus.INCOMPLETE));
+        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 13:00:00", DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 13:05:00", DATE_TIME_FORMATTER), 300, "Stop1", "Stop2", new BigDecimal("3.25"), "Company1", "Bus37", "5500005555555559", TripStatus.COMPLETED));
+        expectedTrips.add(new Trip(LocalDateTime.parse("23-01-2023 08:00:00", DATE_TIME_FORMATTER), LocalDateTime.parse("23-01-2023 08:02:00", DATE_TIME_FORMATTER), 120, "Stop1", "Stop1", BigDecimal.ZERO, "Company1", "Bus37", "4111111111111111", TripStatus.CANCELLED));
+        expectedTrips.add(new Trip(LocalDateTime.parse("24-01-2023 16:30:00", DATE_TIME_FORMATTER), LocalDateTime.parse("24-01-2023 16:30:00", DATE_TIME_FORMATTER), 0, "Stop2", "Stop2", new BigDecimal("5.50"), "Company1", "Bus37", "5500005555555559", TripStatus.INCOMPLETE));
 
         Injector injector = Guice.createInjector(new BasicModule());
-        var tripProcessor = injector.getInstance(TripProcessor.class);
+        var tripProcessor = injector.getInstance(ITripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(4, trips.size());

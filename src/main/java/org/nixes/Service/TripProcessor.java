@@ -1,16 +1,22 @@
-package org.nixes;
+package org.nixes.Service;
 
 import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
+import org.nixes.Model.Tap;
+import org.nixes.Model.Trip;
+import org.nixes.Enum.TripStatus;
 
 import java.time.Duration;
 import java.util.*;
 
-public class TripProcessor {
-    private final TripPriceCalculator tripPriceCalculator;
+/**
+ * This class processes a list of taps and generates a list of trips.
+ */
+public class TripProcessor implements ITripProcessor {
+    private final ITripPriceCalculator tripPriceCalculator;
 
     @Inject
-    public TripProcessor(TripPriceCalculator tripPriceCalculator) {
+    public TripProcessor(ITripPriceCalculator tripPriceCalculator) {
         this.tripPriceCalculator = tripPriceCalculator;
     }
 

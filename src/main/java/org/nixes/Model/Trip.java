@@ -1,7 +1,7 @@
-package org.nixes;
+package org.nixes.Model;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.nixes.Enum.TripStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -121,5 +121,21 @@ public class Trip {
 
     public void setStatus(TripStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "startedOnUTC=" + startedOnUTC +
+                ", finishedOnUTC=" + finishedOnUTC +
+                ", durationSecs=" + durationSecs +
+                ", fromStopId='" + fromStopId + '\'' +
+                ", toStopId='" + toStopId + '\'' +
+                ", chargeAmount=" + chargeAmount +
+                ", companyId='" + companyId + '\'' +
+                ", busID='" + busID + '\'' +
+                ", primaryAccountNumber='" + primaryAccountNumber + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
