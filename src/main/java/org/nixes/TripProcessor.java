@@ -57,6 +57,21 @@ public class TripProcessor {
         return tapOn.getStopId().equals(tapOff.getStopId());
     }
 
+    private Trip createIncompleteTrip(Tap tap) {
+        return new Trip(
+                tap.getDateTimeUTC(),
+                tap.getDateTimeUTC(),
+                0,
+                tap.getStopId(),
+                tap.getStopId(),
+                calculateIncompleteChargeAmount(tap),
+                tap.getCompanyId(),
+                tap.getBusId(),
+                tap.getPrimaryAccountNumber(),
+                TripStatus.INCOMPLETE
+        );
+    }
+
     public List<Trip> processTrips(@NotNull List<Tap> taps) {
         // sort the taps by time ascending
         taps.sort(Comparator.comparing(Tap::getDateTimeUTC));
@@ -103,35 +118,11 @@ public class TripProcessor {
 
         // add any remaining incomplete trips to the processed trips list
         for (var tap: incompleteTrips.values()) {
-            var trip = new Trip(
-                    tap.getDateTimeUTC(),
-                    tap.getDateTimeUTC(),
-                    0,
-                    tap.getStopId(),
-                    tap.getStopId(),
-                    calculateIncompleteChargeAmount(tap),
-                    tap.getCompanyId(),
-                    tap.getBusId(),
-                    tap.getPrimaryAccountNumber(),
-                    TripStatus.INCOMPLETE
-            );
-            processedTrips.add(trip);
+            processedTrips.add(createIncompleteTrip(tap));
         }
 
         for (var tap: uncompletableTrips) {
-            var trip = new Trip(
-                    tap.getDateTimeUTC(),
-                    tap.getDateTimeUTC(),
-                    0,
-                    tap.getStopId(),
-                    tap.getStopId(),
-                    calculateIncompleteChargeAmount(tap),
-                    tap.getCompanyId(),
-                    tap.getBusId(),
-                    tap.getPrimaryAccountNumber(),
-                    TripStatus.INCOMPLETE
-            );
-            processedTrips.add(trip);
+            processedTrips.add(createIncompleteTrip(tap));
         }
 
         return processedTrips;
