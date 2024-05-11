@@ -7,11 +7,21 @@ import java.time.Duration;
 import java.util.*;
 
 public class TripProcessor {
-    private HashMap<Set<String>, BigDecimal> fareRules = new HashMap<>();
-    private HashMap<String, BigDecimal> maxFares = new HashMap<>();
+    private HashMap<Set<String>, BigDecimal> fareRules;
+    private HashMap<String, BigDecimal> maxFares;
+
+    public TripProcessor() {
+        this.setFareRules(new HashMap<Set<String>, BigDecimal>( Map.of(
+                Set.of("Stop1", "Stop2"), new BigDecimal("3.25"),
+                Set.of("Stop2", "Stop3"), new BigDecimal("5.50"),
+                Set.of("Stop1", "Stop3"), new BigDecimal("7.30")
+        )));
+    }
 
     public void setFareRules(HashMap<Set<String>, BigDecimal> fareRules) {
         this.fareRules = fareRules;
+
+        maxFares = new HashMap<>();
         // find the max fare for each stop so we can calculate the incomplete charge amount
         for (var entry: fareRules.entrySet()) {
             var stops = entry.getKey();
@@ -26,19 +36,11 @@ public class TripProcessor {
         }
     }
 
-    public TripProcessor() {
-        this.setFareRules(new HashMap<Set<String>, BigDecimal>( Map.of(
-                Set.of("Stop1", "Stop2"), new BigDecimal("3.25"),
-                Set.of("Stop2", "Stop3"), new BigDecimal("5.50"),
-                Set.of("Stop1", "Stop3"), new BigDecimal("7.30")
-        )));
-    }
-
-    private BigDecimal calculateIncompleteChargeAmount(Tap tap) {
+    protected BigDecimal calculateIncompleteChargeAmount(Tap tap) {
         return maxFares.getOrDefault(tap.getStopId(), BigDecimal.ZERO);
     }
 
-    private BigDecimal calculateChargeAmount(Tap tapOn, Tap tapOff) {
+    protected BigDecimal calculateChargeAmount(Tap tapOn, Tap tapOff) {
         if (isTripCancelled(tapOn, tapOff)) {
             return BigDecimal.ZERO;
         }
@@ -53,11 +55,11 @@ public class TripProcessor {
         throw new IllegalArgumentException("Fare not found for stops: " + currentSet);
     }
 
-    private static boolean isTripCancelled(Tap tapOn, Tap tapOff) {
+    protected static boolean isTripCancelled(Tap tapOn, Tap tapOff) {
         return tapOn.getStopId().equals(tapOff.getStopId());
     }
 
-    private Trip createIncompleteTrip(Tap tap) {
+    protected Trip createIncompleteTrip(Tap tap) {
         return new Trip(
                 tap.getDateTimeUTC(),
                 tap.getDateTimeUTC(),
@@ -72,7 +74,9 @@ public class TripProcessor {
         );
     }
 
-    public List<Trip> processTrips(@NotNull List<Tap> taps) {
+    protected List<Trip> processTrips(@NotNull List<Tap> inputTaps) {
+        // make a copy of the input list just to be safe we don't modify the original when sorting
+        var taps = new ArrayList<>(inputTaps);
         // sort the taps by time ascending
         taps.sort(Comparator.comparing(Tap::getDateTimeUTC));
 
