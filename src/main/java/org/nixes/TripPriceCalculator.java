@@ -1,5 +1,7 @@
 package org.nixes;
 
+import com.google.inject.Inject;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +11,7 @@ public class TripPriceCalculator {
     private HashMap<Set<String>, BigDecimal> fareRules;
     private HashMap<String, BigDecimal> maxFares;
 
+    @Inject
     public TripPriceCalculator() {
         this.setFareRules(new HashMap<Set<String>, BigDecimal>( Map.of(
                 Set.of("Stop1", "Stop2"), new BigDecimal("3.25"),

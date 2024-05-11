@@ -1,5 +1,8 @@
 package org.nixes;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import java.io.IOException;
 
 public class TripProcessCommand {
@@ -8,10 +11,15 @@ public class TripProcessCommand {
         var outputFileName = "trips.csv";
         System.out.println("Processing trips from file: " + fileName);
         var taps = DataHelper.loadTaps(fileName);
-        // would use a dependency injection framework to inject the TripProcessor in a bigger application context
-        var fareCalculator = new TripPriceCalculator();
-        var tripProcessor = new TripProcessor(fareCalculator);
+        Injector injector = Guice.createInjector(new BasicModule());
+        var tripProcessor = injector.getInstance(TripProcessor.class);
         var trips = tripProcessor.processTrips(taps);
+
+
+
+
+
+
         System.out.println("Saving trips to file: " + outputFileName);
         DataHelper.saveTripsCsv(trips, outputFileName);
     }

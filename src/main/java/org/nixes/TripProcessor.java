@@ -1,5 +1,6 @@
 package org.nixes;
 
+import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -8,6 +9,7 @@ import java.util.*;
 public class TripProcessor {
     private final TripPriceCalculator tripPriceCalculator;
 
+    @Inject
     public TripProcessor(TripPriceCalculator tripPriceCalculator) {
         this.tripPriceCalculator = tripPriceCalculator;
     }
