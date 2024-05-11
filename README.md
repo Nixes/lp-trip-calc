@@ -29,5 +29,6 @@ Run 'TripProcessCommand' with an input taps.csv in the working directory.
 ## Issues/Observations
 
 - The DurationSecs in the example output seems incorrect. The difference in mins between the Started and Finished times is 5 mins which is 300 seconds. The originally provided output says 900 seconds.
+- The started and finished times in the example output do not match the relevant tap ids in the input taps.csv file
 - There are some cases of tap offs without tap ons in the example data. I have assumed that these should be considered as incomplete trips. But this would need to be confirmed with the business.
 - What is the cause of these isolated tapOffs, is there a data quality/consistency issue?
