@@ -74,7 +74,7 @@ public class TripProcessor {
         );
     }
 
-    protected List<Trip> processTrips(@NotNull List<Tap> inputTaps) {
+    public List<Trip> processTrips(@NotNull List<Tap> inputTaps) {
         // make a copy of the input list just to be safe we don't modify the original when sorting
         var taps = new ArrayList<>(inputTaps);
         // sort the taps by time ascending
