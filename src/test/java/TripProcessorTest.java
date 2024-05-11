@@ -4,7 +4,6 @@ import org.nixes.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +16,8 @@ public class TripProcessorTest {
         taps.add(tap1);
         taps.add(tap2);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -42,7 +42,8 @@ public class TripProcessorTest {
         taps.add(tap1);
         taps.add(tap2);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -65,7 +66,8 @@ public class TripProcessorTest {
         var tap1 = new Tap("1", LocalDateTime.parse("01-01-2020 10:00:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus1", "PAN1");
         taps.add(tap1);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -90,7 +92,8 @@ public class TripProcessorTest {
         taps.add(tap1);
         taps.add(tap2);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(2, trips.size());
@@ -129,7 +132,8 @@ public class TripProcessorTest {
         taps.add(tap1);
         taps.add(tap2);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(1, trips.size());
@@ -152,7 +156,8 @@ public class TripProcessorTest {
         taps.add(tap1);
         taps.add(tap2);
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(2, trips.size());
@@ -199,7 +204,8 @@ public class TripProcessorTest {
         expectedTrips.add(new Trip(LocalDateTime.parse("23-01-2023 08:00:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("23-01-2023 08:02:00", DataHelper.DATE_TIME_FORMATTER), 120, "Stop1", "Stop1", BigDecimal.ZERO, "Company1", "Bus37", "4111111111111111", TripStatus.CANCELLED));
         expectedTrips.add(new Trip(LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), 0, "Stop2", "Stop2", new BigDecimal("5.50"), "Company1", "Bus37", "5500005555555559", TripStatus.INCOMPLETE));
 
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
 
         assertEquals(4, trips.size());

@@ -9,7 +9,8 @@ public class TripProcessCommand {
         System.out.println("Processing trips from file: " + fileName);
         var taps = DataHelper.loadTaps(fileName);
         // would use a dependency injection framework to inject the TripProcessor in a bigger application context
-        var tripProcessor = new TripProcessor();
+        var fareCalculator = new TripPriceCalculator();
+        var tripProcessor = new TripProcessor(fareCalculator);
         var trips = tripProcessor.processTrips(taps);
         System.out.println("Saving trips to file: " + outputFileName);
         DataHelper.saveTripsCsv(trips, outputFileName);
