@@ -89,8 +89,9 @@ public class TripProcessor {
                 var existingTap = incompleteTrips.get(tap.getPrimaryAccountNumber());
                 if (existingTap != null) {
                     // if there is, then this tapOn is uncompletable
-                    uncompletableTrips.add(tap);
+                    uncompletableTrips.add(existingTap);
                 }
+
                 incompleteTrips.put(tap.getPrimaryAccountNumber(), tap);
             } else {
                 var tapOn = incompleteTrips.get(tap.getPrimaryAccountNumber());
@@ -128,6 +129,8 @@ public class TripProcessor {
         for (var tap: uncompletableTrips) {
             processedTrips.add(createIncompleteTrip(tap));
         }
+
+        processedTrips.sort(Comparator.comparing(Trip::getStartedOnUTC));
 
         return processedTrips;
     }
