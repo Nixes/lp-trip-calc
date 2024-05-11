@@ -24,7 +24,6 @@ Run 'TripProcessCommand' with an input taps.csv in the working directory.
 - Cancelled/incomplete trips use the same from and to StopId
 - Cancelled/incomplete trips use the first DateTimeUTC as both the Started and Finished values
 - Assumed the names of the various trip statuses are "COMPLETED", "INCOMPLETE", "CANCELLED". Only COMPLETED was provided.
-- Output trips.csv is sorted by Finished time
 
 ## Issues/Observations
 
