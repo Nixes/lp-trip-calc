@@ -29,7 +29,7 @@ public class TripProcessor {
                 tap.getCompanyId(),
                 tap.getBusId(),
                 tap.getPrimaryAccountNumber(),
-                TripStatus.INCOMPLETE
+                status
         );
     }
 
