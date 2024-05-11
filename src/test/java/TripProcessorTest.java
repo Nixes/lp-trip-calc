@@ -166,4 +166,45 @@ public class TripProcessorTest {
         assertEquals("Company1", trip.getCompanyId());
         assertEquals(TripStatus.INCOMPLETE, trip.getStatus());
     }
+
+    /**
+     * Custom assertion method to assert that all properties of two trips are equal.
+     */
+    private static void assertTripEquals(Trip expected, Trip actual) {
+        assertEquals(expected.getStartedOnUTC(), actual.getStartedOnUTC());
+        assertEquals(expected.getFinishedOnUTC(), actual.getFinishedOnUTC());
+        assertEquals(expected.getDurationSecs(), actual.getDurationSecs());
+        assertEquals(expected.getFromStopId(), actual.getFromStopId());
+        assertEquals(expected.getToStopId(), actual.getToStopId());
+        assertEquals(expected.getChargeAmount(), actual.getChargeAmount());
+        assertEquals(expected.getCompanyId(), actual.getCompanyId());
+        assertEquals(expected.getBusID(), actual.getBusID());
+        assertEquals(expected.getPrimaryAccountNumber(), actual.getPrimaryAccountNumber());
+        assertEquals(expected.getStatus(), actual.getStatus());
+    }
+
+    @Test
+    public void testCompleteSampleInput() {
+        var taps = new ArrayList<Tap>();
+        taps.add(new Tap("1", LocalDateTime.parse("22-01-2023 13:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "5500005555555559"));
+        taps.add(new Tap("2", LocalDateTime.parse("22-01-2023 13:05:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
+        taps.add(new Tap("3", LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop3", "Company1", "Bus36", "4111111111111111"));
+        taps.add(new Tap("4", LocalDateTime.parse("23-01-2023 08:00:00", DataHelper.DATE_TIME_FORMATTER), true, "Stop1", "Company1", "Bus37", "4111111111111111"));
+        taps.add(new Tap("5", LocalDateTime.parse("23-01-2023 08:02:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop1", "Company1", "Bus37", "4111111111111111"));
+        taps.add(new Tap("6", LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), false, "Stop2", "Company1", "Bus37", "5500005555555559"));
+
+        var expectedTrips = new ArrayList<Trip>();
+        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 09:20:00", DataHelper.DATE_TIME_FORMATTER), 0, "Stop3", "Stop3", new BigDecimal("7.30"), "Company1", "Bus36", "4111111111111111", TripStatus.INCOMPLETE));
+        expectedTrips.add(new Trip(LocalDateTime.parse("22-01-2023 13:00:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("22-01-2023 13:05:00", DataHelper.DATE_TIME_FORMATTER), 300, "Stop1", "Stop2", new BigDecimal("3.25"), "Company1", "Bus37", "5500005555555559", TripStatus.COMPLETED));
+        expectedTrips.add(new Trip(LocalDateTime.parse("23-01-2023 08:00:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("23-01-2023 08:02:00", DataHelper.DATE_TIME_FORMATTER), 120, "Stop1", "Stop1", BigDecimal.ZERO, "Company1", "Bus37", "4111111111111111", TripStatus.CANCELLED));
+        expectedTrips.add(new Trip(LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), LocalDateTime.parse("24-01-2023 16:30:00", DataHelper.DATE_TIME_FORMATTER), 0, "Stop2", "Stop2", new BigDecimal("5.50"), "Company1", "Bus37", "5500005555555559", TripStatus.INCOMPLETE));
+
+        var tripProcessor = new TripProcessor();
+        var trips = tripProcessor.processTrips(taps);
+
+        assertEquals(4, trips.size());
+        for (int i = 0; i < expectedTrips.size(); i++) {
+            assertTripEquals(expectedTrips.get(i), trips.get(i));
+        }
+    }
 }

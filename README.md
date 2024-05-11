@@ -11,11 +11,26 @@ The project is structured as follows:
 
 ## Installation and Build
 
-Depends on a java 21 JDK.
+Depends on:
+- a java 21 JDK.
+- Apache Maven
+
+```
+mvn clean install
+```
 
 ## Execution
 
 Run 'TripProcessCommand' with an input taps.csv in the working directory.
+
+```
+java -cp target\lp-trip-calc-1.0-SNAPSHOT.jar org.nixes.TripProcessCommand
+```
+
+## Running tests
+```
+mvn test
+```
 
 
 ## Assumptions
