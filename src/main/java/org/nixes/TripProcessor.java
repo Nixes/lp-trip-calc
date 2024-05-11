@@ -84,7 +84,7 @@ public class TripProcessor {
         var uncompletableTrips = new LinkedList<Tap>();
         var processedTrips = new LinkedList<Trip>();
         for (var tap: taps) {
-            if (tap.getTapOn()) {
+            if (tap.getIsTapOn()) {
                 // check if there is already a tapOn for this account number
                 var existingTap = incompleteTrips.get(tap.getPrimaryAccountNumber());
                 if (existingTap != null) {

@@ -48,11 +48,11 @@ public class Tap {
         this.dateTimeUTC = dateTimeUTC;
     }
 
-    public Boolean getTapOn() {
+    public Boolean getIsTapOn() {
         return isTapOn;
     }
 
-    public void setTapOn(Boolean tapOn) {
+    public void setIsTapOn(Boolean tapOn) {
         isTapOn = tapOn;
     }
 
